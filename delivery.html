@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Medi-Drop Delivery Management</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Delivery Management</h1>
+  
+  <div id="new-delivery">
+    <h2>Create New Delivery</h2>
+    <form id="delivery-form">
+      <h3>Pickup Details</h3>
+      <label for="pickup-facility">Select Facility:</label>
+      <select id="pickup-facility" name="pickup-facility" required>
+        <option value="">-- Select a facility --</option>
+        <!-- Options will be populated from data.js -->
+      </select><br>
+      
+      <h3>Delivery Details</h3>
+      <label for="delivery-zone">Delivery Zone:</label>
+      <select id="delivery-zone" name="delivery-zone" required>
+        <option value="">-- Select a zone --</option>
+        <!-- Options will be populated from data.js -->
+      </select><br>
+      
+      <label for="delivery-address">Delivery Address:</label><br>
+      <input type="text" id="delivery-address" name="delivery-address" required><br>
+      
+      <label for="recipient-name">Recipient Name:</label><br>
+      <input type="text" id="recipient-name" name="recipient-name" required><br>
+      
+      <label for="recipient-phone">Recipient Phone:</label><br>
+      <input type="text" id="recipient-phone" name="recipient-phone" required><br>
+      
+      <h3>Delivery Partner</h3>
+      <label for="delivery-partner">Select Partner:</label><br>
+      <input type="radio" id="uber" name="delivery-partner" value="uber">
+      <label for="uber">Uber</label><br>
+      <input type="radio" id="bolt" name="delivery-partner" value="bolt">
+      <label for="bolt">Bolt</label><br>
+      <input type="radio" id="indrive" name="delivery-partner" value="indrive">
+      <label for="indrive">InDrive</label><br>
+      
+      <h3>Privacy Level</h3>
+      <input type="radio" id="standard" name="privacy-level" value="standard" checked>
+      <label for="standard">Standard: Regular secure packaging</label><br>
+      <input type="radio" id="high" name="privacy-level" value="high">
+      <label for="high">High: Extra secure packaging</label><br>
+      
+      <h3>Delivery Status</h3>
+      <select id="delivery-status" name="delivery-status">
+        <option value="pending">Pending</option>
+        <option value="accepted">Accepted</option>
+        <option value="collected">Collected</option>
+        <option value="in-transit">In Transit</option>
+        <option value="delivered">Delivered</option>
+      </select><br><br>
+      
+      <input type="submit" value="Create Delivery">
+    </form>
+  </div>
+  
+  <div id="active-deliveries">
+    <h2>Active Deliveries</h2>
+    <table id="deliveries-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Pickup</th>
+          <th>Delivery Zone</th>
+          <th>Recipient</th>
+          <th>Partner</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Deliveries will be populated here -->
+      </tbody>
+    </table>
+  </div>
+  
+  <script src="data.js"></script>
+  <script>
+    // Populate facility dropdown
+    const facilityDropdown = document.getElementById('pickup-facility');
+    medicalFacilities.forEach(facility => {
+      const option = document.createElement('option');
+      option.value = facility.name;
+      option.textContent = `${facility.name} (${facility.type})`;
+      facilityDropdown.appendChild(option);
+    });
+    
+    // Populate zone dropdown
+    const zoneDropdown = document.getElementById('delivery-zone');
+    deliveryZones.forEach(zone => {
+      const option = document.createElement('option');
+      option.value = zone.name;
+      option.textContent = `${zone.name} - R${zone.deliveryFee} (${zone.estimatedTime})`;
+      zoneDropdown.appendChild(option);
+    });
+    
+    // Sample data for active deliveries
+    const activeDeliveries = [
+      {
+        id: 'MD001',
+        pickup: 'Clicks Walmer',
+        zone: 'Summerstrand',
+        recipient: 'John Doe',
+        partner: 'Bolt',
+        status: 'In Transit'
+      },
+      {
+        id: 'MD002',
+        pickup: 'Dis-Chem Summerstrand',
+        zone: 'Mill Park',
+        recipient: 'Jane Smith',
+        partner: 'Uber',
+        status: 'Collected'
+      }
+    ];
+    
+    // Populate active deliveries table
+    const deliveriesTable = document.getElementById('deliveries-table').getElementsByTagName('tbody')[0];
+    activeDeliveries.forEach(delivery => {
+      const row = deliveriesTable.insertRow();
+      row.insertCell(0).textContent = delivery.id;
+      row.insertCell(1).textContent = delivery.pickup;
+      row.insertCell(2).textContent = delivery.zone;
+      row.insertCell(3).textContent = delivery.recipient;
+      row.insertCell(4).textContent = delivery.partner;
+      
+      const statusCell = row.insertCell(5);
+      statusCell.textContent = delivery.status;
+      
+      const actionsCell = row.insertCell(6);
+      actionsCell.innerHTML = `
+        <button onclick="updateStatus('${delivery.id}', 'collected')">Mark Collected</button>
+        <button onclick="updateStatus('${delivery.id}', 'in-transit')">Mark In Transit</button>
+        <button onclick="updateStatus('${delivery.id}', 'delivered')">Mark Delivered</button>
+      `;
+    });
+    
+    // Handle form submission
+    document.getElementById('delivery-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Delivery request created! You will now need to manually request a ride from the selected partner app.');
+    });
+    
+    // Function to update delivery status
+    function updateStatus(id, status) {
+      alert(`Delivery ${id} status updated to ${status}`);
+      // In a real app, this would update the database and refresh the table
+    }
+  </script>
+</body>
+</html>
